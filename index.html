@@ -1385,23 +1385,13 @@
       try {
         const params = new URLSearchParams(window.location.search || "");
         if (params.get("player") === "1") {
-          localStorage.removeItem("multiverse_host_unlock");
-          localStorage.setItem("multiverse_force_player_view", "1");
           return false;
         }
         if (params.get("host") === "1") {
-          localStorage.removeItem("multiverse_force_player_view");
-          localStorage.setItem("multiverse_host_unlock", "1");
           return true;
         }
         if (PLAYER_LOCKED_BUILD) {
           return false;
-        }
-        if (localStorage.getItem("multiverse_force_player_view") === "1") {
-          return false;
-        }
-        if (localStorage.getItem("multiverse_host_unlock") === "1") {
-          return true;
         }
         return true;
       } catch (err) {}
@@ -2636,18 +2626,15 @@
     document.addEventListener('keydown', (e) => {
       if ((e.ctrlKey || e.metaKey) && e.shiftKey && String(e.key || '').toLowerCase() === 'e') {
         e.preventDefault();
-        const currentlyHost = isHostModeEnabled();
-        if (currentlyHost) {
-          localStorage.removeItem("multiverse_host_unlock");
-          localStorage.setItem("multiverse_force_player_view", "1");
-          const url = new URL(window.location.href);
+        const url = new URL(window.location.href);
+        if (isHostModeEnabled()) {
           url.searchParams.delete("host");
-          window.history.replaceState({}, "", url.toString());
+          url.searchParams.set("player", "1");
         } else {
-          localStorage.removeItem("multiverse_force_player_view");
-          localStorage.setItem("multiverse_host_unlock", "1");
+          url.searchParams.delete("player");
+          url.searchParams.set("host", "1");
         }
-        applyHostVisibility();
+        window.location.href = url.toString();
       }
     });
 
