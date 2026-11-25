@@ -1394,15 +1394,16 @@
           localStorage.setItem("multiverse_host_unlock", "1");
           return true;
         }
-        if (localStorage.getItem("multiverse_host_unlock") === "1") {
-          return true;
+        if (PLAYER_LOCKED_BUILD) {
+          return false;
         }
         if (localStorage.getItem("multiverse_force_player_view") === "1") {
           return false;
         }
-        if (!PLAYER_LOCKED_BUILD) {
+        if (localStorage.getItem("multiverse_host_unlock") === "1") {
           return true;
         }
+        return true;
       } catch (err) {}
       return !PLAYER_LOCKED_BUILD;
     }
